@@ -1,5 +1,5 @@
 var canvas, view;
-var sc, seed;
+var sc, seed, colseed;
 var t, go, capture = false;
 
 var things;
@@ -7,7 +7,7 @@ const gap = 15;
 // var grid, cell, cols, rows, margin;
 var store = {};
 
-const skw = 800, skh = 800;
+const skw = 1080, skh = 1350;
 const cols = 40, rows = 40;
 var grid, cell;
 var sx, script;
@@ -15,14 +15,14 @@ var params;
 var zoom = 1;
 
 var vid;
-var startVid = false;
+var startVid = true;
 var recording = false;
 var stopVid = false;
-var duration = 1800;
+var duration = 1500;
 // var frameEvery = 2;
 
 // var autoZoom = false;
-var autoZoom = {start:120, end:1200, from:1, to: 4.5, ease:'IO', pw:3};
+var autoZoom = {start:60, end:1500, from:1, to: 5.5, ease:'IO', pw:3};
 
 // pasteles Maore Sagarzazu
 //var back = [255,239,224];
@@ -57,12 +57,16 @@ var font;
 
 
 function setup() {
-    view = createCanvas(int(windowHeight * 1), windowHeight);
+    if(startVid){
+        view = createCanvas(skw, skh);
+    } else {
+        view = createCanvas(int(windowHeight * skw/skh), windowHeight);
+    }   
     view.parent('container');
 
     params = getURLParams();
 
-    sc = 2;
+    sc = 1;
     // cell = gap*2;
     // margin = 200;
     // cols = int((skw+margin*2)/cell)+1;
@@ -75,7 +79,7 @@ function setup() {
 
     
     
-
+    col_generate();
     generate();
     reset();
 }
@@ -85,9 +89,29 @@ function generate() {
     console.log("SEED", seed);
 }
 
+function col_generate() {
+    colseed = 'colseed' in params ? parseInt(params.colseed) : int(Math.random() * 99999999);
+    console.log("COLSEED", colseed);
+    // 82300433
+}
+
 function reset() {
+    console.log("?seed="+seed+"&colseed="+colseed);
+
+    randomSeed(colseed);
+    noiseSeed(colseed);
+
+    csp = new ColorSpace({num:7});
+    csp.makeBackAndLine(0.7);
+    csp.run(300);
+
+    back = csp.getVal(0);
+    console.log(back)
+    front = csp.getList(1);
+
     randomSeed(seed);
     noiseSeed(seed);
+
     
     canvas = createGraphics(skw*sc, skh*sc);
     canvas.background(back[0], back[1], back[2]);
@@ -947,7 +971,14 @@ function keyTyped() {
     } else if (key === 'g') {
         generate();
         reset();
-    } else if (key === '.') {
+    } else if (key === 'G') {
+        col_generate();
+        reset();
+    } else if (key === 'H') {
+        generate();
+        col_generate();
+        reset();
+    }  else if (key === '.') {
         step = true;
     } else if (key === 'n') {
         sx ++; sx %= scripts.length;

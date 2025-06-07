@@ -20,7 +20,7 @@ function locs_spread(_c) {
             if(skp) continue;
             break;
         }
-        ps.push({x:px, y:py, r:r});
+        ps.push({n:i, x:px, y:py, r:r});
         spreadLocs.push({x:px, y:py, r:r});
 
     }
@@ -44,7 +44,7 @@ function locs_grid(_c) {
         let nr = floor(i/c.cs)
         let px = c.frame.x + c.frame.w/(c.cs) * (nc+0.5);
         let py = c.frame.y + c.frame.h/(c.rs) * (nr+0.5);
-        ps.push({x:px, y:py});
+        ps.push({n:i, x:px, y:py});
         spreadLocs.push({x:px, y:py});
     }
 
@@ -148,12 +148,11 @@ var scr = {
     name: "grilla 16 blobs con viento",
 
     init: function() {
-        autoZoom = false;
-        
-        this.col = pick(front);
-        this.rot = random(PI*2);
+      
+        //this.col = pick(front);
+        let rot = random(PI*2);
 
-        locs = locs_grid({n:16, cs:4, rs:4})
+        let locs = locs_grid({n:16, cs:4, rs:4})
 
         for(let lc of locs){
             let fs = [
@@ -165,12 +164,12 @@ var scr = {
             new GrowBlob({
                 cx:lc.x,
                 cy:lc.y,
-                rot:this.rot,
+                rot:rot,
                 forces:fs,
                 num:60,
                 every:5,
                 damp:0.85,
-                col:this.col,
+                col:front[lc.n % front.length],
             });
         }
     },
