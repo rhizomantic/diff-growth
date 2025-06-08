@@ -7,22 +7,27 @@ const gap = 15;
 // var grid, cell, cols, rows, margin;
 var store = {};
 
-const skw = 1080, skh = 1350;
+const skw = 1080, skh = 1080;
 const cols = 40, rows = 40;
 var grid, cell;
 var sx, script;
 var params;
 var zoom = 1;
+var stepsPerFrame = 3;
 
 var vid;
 var startVid = true;
 var recording = false;
 var stopVid = false;
-var duration = 1500;
+var duration = 1600;
 // var frameEvery = 2;
 
 // var autoZoom = false;
-var autoZoom = {start:60, end:1500, from:1, to: 5.5, ease:'IO', pw:3};
+var autoZoom = [{start:0, end:duration, from:1, to: 5.5, ease:'IO', pw:2}];
+// var autoZoom = [
+//     {start:0, end:750, from:1, to: 4.5, ease:'IO', pw:3},
+//     {start:750, end:1500, from:4.5, to:1, ease:'IO', pw:3}
+// ]
 
 // pasteles Maore Sagarzazu
 //var back = [255,239,224];
@@ -135,7 +140,7 @@ function reset() {
     script.init();
 
     if(autoZoom){
-        zoom = autoZoom.from;
+        zoom = autoZoom[0].from;
     }
 
     if(startVid) {
@@ -167,59 +172,11 @@ function draw() {
         background(255);
         canvas.background(back[0], back[1], back[2]);
 
-        //grid = [...Array(cols)].map(e => Array(rows));
-        //console.log(grid);
-        canvas.stroke(192, 0, 0);
-        canvas.noFill();
-        grid = [];
-        for(let c=0; c<cols; c++){
-            grid[c] = [];
-            // canvas.line(cell.w*c*sc, 0, cell.w*c*sc, skh*sc);
-            for(let r=0; r<rows; r++){
-                grid[c][r] = [];
-                // if(c == 0) canvas.line(0, cell.h*r*sc, skw*sc, cell.h*r*sc);
-            }
-        }
+        // canvas.stroke(192, 0, 0);
+        // canvas.noFill();
 
-        script.update();
-        
-        // canvas.fill(0, 128);
-        // canvas.stroke(0, 128);
-        // //canvas.noStroke();
-        for(let i=0; i<things.length; i++) things[i].update();
-
-        let d, dif = createVector(), f;
-        
-        for(let c=0; c<cols; c++){
-            for(let r=0; r<rows; r++){
-                let ns = [...grid[c][r]];
-                ns.push(...grid[(c+1)%cols][r]);
-                ns.push(...grid[c][(r+1)%rows]);
-                ns.push(...grid[(c+1)%cols][(r+1)%rows]);
-                ns.push(...grid[c-1 < 0 ? cols-1 : c-1][(r+1)%rows]);
-
-                let a, b, dd;
-                for(let i=0; i<grid[c][r].length; i++){
-                    a = grid[c][r][i];
-                    for(let j=i+1; j<ns.length; j++){
-                        b = ns[j];
-                        if(a == b) continue;
-                        dif.set(a.wpos.x - b.wpos.x, a.wpos.y - b.wpos.y);
-                        if(abs(dif.x) > skw/2) dif.x = (skw-abs(dif.x)) * (dif.x > 0 ? -1 : 1);
-                        if(abs(dif.y) > skh/2) dif.y = (skh-abs(dif.y)) * (dif.y > 0 ? -1 : 1);
-                        d = dif.mag();
-                        // dd = a.thing == b.thing ? cell.d/2 : cell.d;
-                        dd = (b == a.pv || b == a.nx) ? cell.d/2 : cell.d;
-                        //dd = cell.d;
-
-                        if(d < dd){
-                            dif.setMag(lerp(5, 0, d/dd));
-                            a.vel.add(dif);
-                            b.vel.sub(dif);
-                        }
-                    }
-                }
-            }
+        for(let i=0; i<stepsPerFrame; i++){
+            makeStep();
         }
 
         // canvas.stroke(192,0,0);
@@ -255,18 +212,70 @@ function draw() {
 
         //if(t>0 && t%600 == 0) go = false;
         if(autoZoom){
-            az = autoZoom;
-            // zoom = lerp(1, 7, ease('simple', t/duration, -5));
-            // if(t >= duration) go = false;
-            if(t >= az.start && t < az.end){
-                zoom = lerp(az.from, az.to, ease(az.ease, map(t, az.start, az.end, 0, 1), az.pw))
+            // az = autoZoom;
+            // if(t >= az.start && t < az.end){
+            //     zoom = lerp(az.from, az.to, ease(az.ease, map(t, az.start, az.end, 0, 1), az.pw))
+            // }
+            for(let az of autoZoom){
+                if(t >= az.start && t < az.end){
+                    zoom = lerp(az.from, az.to, ease(az.ease, map(t, az.start, az.end, 0, 1), az.pw))
+                }
             }
         }
         
 
         t++;
-        if(t%120 == 1) console.log(t, frameRate());
+        if(t%180 == 1) console.log(t, frameRate());
         step = false;
+    }
+}
+
+function makeStep() {
+    grid = [];
+    for(let c=0; c<cols; c++){
+        grid[c] = [];
+        // canvas.line(cell.w*c*sc, 0, cell.w*c*sc, skh*sc);
+        for(let r=0; r<rows; r++){
+            grid[c][r] = [];
+            // if(c == 0) canvas.line(0, cell.h*r*sc, skw*sc, cell.h*r*sc);
+        }
+    }
+
+    script.update();
+
+    for(let i=0; i<things.length; i++) things[i].update();
+
+    let d, dif = createVector();
+    for(let c=0; c<cols; c++){
+        for(let r=0; r<rows; r++){
+            let ns = [...grid[c][r]];
+            ns.push(...grid[(c+1)%cols][r]);
+            ns.push(...grid[c][(r+1)%rows]);
+            ns.push(...grid[(c+1)%cols][(r+1)%rows]);
+            ns.push(...grid[c-1 < 0 ? cols-1 : c-1][(r+1)%rows]);
+
+            let a, b, dd;
+            for(let i=0; i<grid[c][r].length; i++){
+                a = grid[c][r][i];
+                for(let j=i+1; j<ns.length; j++){
+                    b = ns[j];
+                    if(a == b) continue;
+                    dif.set(a.wpos.x - b.wpos.x, a.wpos.y - b.wpos.y);
+                    if(abs(dif.x) > skw/2) dif.x = (skw-abs(dif.x)) * (dif.x > 0 ? -1 : 1);
+                    if(abs(dif.y) > skh/2) dif.y = (skh-abs(dif.y)) * (dif.y > 0 ? -1 : 1);
+                    d = dif.mag();
+                    // dd = a.thing == b.thing ? cell.d/2 : cell.d;
+                    dd = (b == a.pv || b == a.nx) ? cell.d/2 : cell.d;
+                    //dd = cell.d;
+
+                    if(d < dd){
+                        dif.setMag(lerp(5, 0, d/dd));
+                        a.vel.add(dif);
+                        b.vel.sub(dif);
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -417,7 +426,7 @@ class Node extends Tweenable{
     constructor(_th, _cf) {
         super(_cf);
 
-        this.name = String(int(random(999999999)));
+        this.name = String(int(random(999999)));
         store[this.name] = this;
 
         this.thing = _th;
@@ -468,7 +477,7 @@ class Node extends Tweenable{
         
 
         //console.log(this.ix, this.ix/this.thing.skin.length, this.forces, this.tweens);
-        //console.log("***", this);
+        // console.log("***", _cf, this.pos);
     }
 
     addForce(f) {
@@ -987,10 +996,10 @@ function keyTyped() {
         sx --; if(sx < 0) sx += scripts.length;
         reset();
     }  else if (key === 's') {
-        saveCanvas(canvas, getTimestamp()+'_'+script.id+"_s"+seed+"_t"+t, "jpg");
+        saveCanvas(canvas, getTimestamp()+'_'+script.id+"_s"+seed +"_cs"+colseed+"_t"+t, "jpg");
         console.log("saveCanvas");
     }  else if (key === 'S') {
-        saveCanvas(view, getTimestamp()+'_'+script.id+"_s"+seed+"_t"+t+"_"+zoom.toFixed(1)+"x", "jpg");
+        saveCanvas(view, getTimestamp()+'_'+script.id+"_s"+seed +"_cs"+colseed+"_t"+t+"_"+zoom.toFixed(1)+"x", "jpg");
         console.log("save view");
     }  else if (key === 'v') {
         startVid = true;

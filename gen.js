@@ -166,7 +166,7 @@ var scr = {
                 cy:lc.y,
                 rot:rot,
                 forces:fs,
-                num:60,
+                num:90,
                 every:5,
                 damp:0.85,
                 col:front[lc.n % front.length],
@@ -177,5 +177,72 @@ var scr = {
     // update: function() {
         
     // }
+}
+scripts.push(scr);
+
+var scr = {
+    id: "grow_flower",
+    name: "flor crecimiento irregular",
+    count: 0,
+    num: 1200,
+    mT: 0,
+    every: 3,
+    thig: null,
+    dads: [],
+
+    init: function() {
+        let petals = 6;
+        this.thing = new Thing({col:front[0]});
+
+        let fs = [
+            {type:'loop', f:1/5},
+            //{type:'local', f:2, from:4, reach:2},
+            {type:'spring', f:0.1, len:30, name:'centroid'}
+            // {type:'push', f:1, name:'centroid'}
+            //{type:'outwards', f:0.03, cw:true}
+        ]
+
+        let a = 0, r = (gap*petals*0.7) / TWO_PI;
+        let neo, pv = null;
+        for(let i=0; i<petals; i++) {
+            a = TWO_PI/petals * i;
+
+            neo = new Node(this.thing, {cx:skw/2 + r*cos(a), cy:skh/2 + r*sin(a), forces:fs})
+            this.dads.push(neo);
+
+            if(pv !== null) {
+                neo.pv = pv;
+                pv.nx = neo;
+            } else {
+                this.thing.root = neo;
+            }
+            pv = neo;
+
+            this.count ++;
+        }
+        neo.nx = this.thing.root;
+        this.thing.root.pv = neo;
+
+    },
+
+    update: function() {
+        if(this.count < this.num && this.mT % this.every == 1) {
+            let fs = [
+                {type:'loop', f:1/5},
+                // {type:'smooth', f:0.1}
+                {type:'local', f:2, from:2, reach:2},
+                {type:'push', f:1, name:'centroid'}
+                // {type:'outwards', f:0.05, cw:true}
+            ]
+
+            // let dad = pick(this.thing.skin);
+            let dad = this.dads[this.count % this.dads.length];
+            this.thing.insertAfter(dad, {forces: fs});
+            this.count ++;
+            //this.findOpposites();
+        }
+
+        this.mT ++;
+    }
 }
 scripts.push(scr);
