@@ -4,6 +4,7 @@ var t, go, capture = false;
 
 var things;
 const gap = 15;
+const gapRatio = 0.8;
 // var grid, cell, cols, rows, margin;
 var store = {};
 
@@ -265,7 +266,7 @@ function makeStep() {
                     if(abs(dif.y) > skh/2) dif.y = (skh-abs(dif.y)) * (dif.y > 0 ? -1 : 1);
                     d = dif.mag();
                     // dd = a.thing == b.thing ? cell.d/2 : cell.d;
-                    dd = (b == a.pv || b == a.nx) ? cell.d/2 : cell.d;
+                    dd = (b == a.pv || b == a.nx) ? cell.d*gapRatio : cell.d;
                     //dd = cell.d;
 
                     if(d < dd){
@@ -356,11 +357,13 @@ class Tweenable {
             case 'num': v = this.thing.skin.length; break;
         }
         //console.log(tw.cs, v, this.calcCrv(tw, v))
+        
 
         if(tw.prop == 'col') tw.obj['col'] = gradient(tw.cs, this.calcCrv(tw, v))
         else tw.obj[tw.prop] = this.calcCrv(tw, v);
 
         if(tw.nd > 0 && this.mT >= tw.nd) this.tweens.delete(tw);
+        // console.log(this.mT, tw.to, min(fract(this.mT/tw.to), 0.8), v, tw.obj[tw.prop]);
     }
 
     calcCrv(c, v) {
@@ -513,7 +516,7 @@ class Node extends Tweenable{
         this.ix = ix; //posición actual en la cadena
         this.nrm = this.ix / (this.type == 'skin' ? this.thing.skin.length : this.thing.bones.length);
 
-        
+        // if(this.ix == 0) console.log(this.forces[1])
 
         // if(this.type == 'centroid'){
         //     let px = 0, py = 0;
@@ -531,7 +534,7 @@ class Node extends Tweenable{
         
         let dif = createVector(), md;
         for(let f of this.forces){
-            if(this.ix%f.every != 0 || this.nrm < f.since || this.nrm > f.until) continue;
+            if(this.ix % f.every != 0 || this.nrm < f.since || this.nrm > f.until) continue;
 
             if(f.type == "attractor"){
                 this.vel.add( (f.x - this.pos.x) * f.f, (f.y - this.pos.y) * f.f );
