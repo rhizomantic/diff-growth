@@ -59,7 +59,6 @@ class GrowBlob extends Thing {
         this.inum = c.inum || 8;
         this.count = 0;
         this.every = 'every' in c ? c.every : 5;
-        this.blow = 'blow' in c ? c.blow : 3;
         this.rot = 'rot' in c ? c.rot : 0;
         this.ord = 'ord' in c ? c.ord : true;
         //this.anchorCf = 'anchor' in c ? c.anchor : null;
@@ -398,7 +397,7 @@ var scr = {
 
         for(let lc of locs){
             let fs = [
-                {type:'wind', f:lerp(0.05, 0.2, lc.n/locs.length), a:rot},
+                {type:'wind', f:0.1, a:lerp(-PI*1.2, PI*0.2, lc.n/locs.length)},
                 {type:'loop', f:1/5},
                 {type:'local', f:2, from:2, reach:2},
             ]
@@ -416,8 +415,42 @@ var scr = {
         }
     },
 
-    // update: function() {
-        
-    // }
+}
+scripts.push(scr);
+
+
+var scr = {
+    id: "grid9_sticks",
+    name: "grilla 9 palos",
+
+    init: function() {
+      
+        //this.col = pick(front);
+        let rot = PI*0.7;//random(PI*2);
+
+        let locs = locs_grid({n:9, cs:3, rs:3})
+
+        for(let lc of locs){
+            let fs = [
+                // {type:'wind', f:0.1, a:lerp(-PI*1.2, PI*0.2, lc.n/locs.length)},
+                {type:'loop', f:1/5},
+                {type:'local', f:2, from:2, reach:2},
+                // {type:'push', f:{src:'nrm', cv:'sin', pw:2, cy:3,  mn:-0.3, mx:0.6}, name:"centroid"}
+                {type:'spring', f:0.005, len:{src:'nrm', cv:'sin', pw:0.2, cy:2,  mn:30, mx:400}, name:"centroid"}
+            ]
+
+            new GrowBlob({
+                cx:lc.x,
+                cy:lc.y,
+                rot:rot,
+                forces:fs,
+                num:90,
+                every:5,
+                damp:0.85,
+                col:front[lc.n % front.length],
+            });
+        }
+    },
+
 }
 scripts.push(scr);
