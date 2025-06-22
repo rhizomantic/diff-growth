@@ -20,13 +20,13 @@ var vid;
 var startVid = true;
 var recording = false;
 var stopVid = false;
-var duration = 360;
+var duration = 480;
 // var frameEvery = 2;
 
 // var autoZoom = false;
 // var autoZoom = [{start:0, end:1200, from:4, to: 5.5, ease:'IO', pw:2}];
 var autoZoom = [
-    {start:0, end:360, from:1, to: 5.5, ease:'IO', pw:2},
+    {start:0, end:480, from:1, to: 5.5, ease:'IO', pw:3},
     // {start:1200, end:1550, from:5.5, to:1, ease:'IO', pw:2}
 ]
 
