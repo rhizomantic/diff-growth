@@ -20,13 +20,13 @@ var vid;
 var startVid = true;
 var recording = false;
 var stopVid = false;
-var duration = 480;
+var duration = 1200;
 // var frameEvery = 2;
 
 // var autoZoom = false;
 // var autoZoom = [{start:0, end:1200, from:4, to: 5.5, ease:'IO', pw:2}];
 var autoZoom = [
-    {start:0, end:480, from:1, to: 4.5, ease:'IO', pw:2},
+    {start:0, end:600, from:1, to: 4.5, ease:'IO', pw:2},
     // {start:1200, end:1550, from:5.5, to:1, ease:'IO', pw:2}
 ]
 
@@ -131,13 +131,13 @@ function reset() {
 
     let def_script = {
         id: "def_id",
-        name: "default name",
+        name: "",
         init: function(){},
         update: function(){}
     }
 
     script = {...def_script, ...scripts[sx]};
-    console.log(script.name);
+    console.log(script.id);
     script.init();
 
     if(autoZoom){
