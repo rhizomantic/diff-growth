@@ -462,7 +462,7 @@ var scr = {
     name: "grilla 9 cruces",
 
     init: function() {
-        let rot = PI*0.7;//random(PI*2);
+        let rot = PI*0.0;//random(PI*2);
         let locs = locs_grid({n:9, cs:3, rs:3})
         let scale = chroma.scale(front);
 
@@ -472,21 +472,62 @@ var scr = {
                 {type:'loop', f:1/5},
                 {type:'local', f:2, from:2, reach:2},
                 // {type:'push', f:{src:'nrm', cv:'sin', pw:2, cy:3,  mn:-0.3, mx:0.6}, name:"centroid"}
-                {type:'spring', f:0.005, len:{src:'nrm', cv:'sin', pw:0.4, cy:4,  mn:30, mx:400}, name:"centroid"}
+                {type:'spring', f:0.005, len:{src:'nrm', cv:'sin', pw:1.8, cy:4,  mn:30, mx:400}, name:"centroid"}
             ]
 
             new GrowBlob({
                 cx:lc.x,
                 cy:lc.y,
                 rot:rot,
+                // rot: random(-PI, PI),
                 forces:fs,
                 num:120,
                 every:5,
                 damp:0.85,
                 //col:front[lc.n % front.length],
                 col: scale(lc.n / locs.length).rgb(),
-                // rot: random(-PI, PI),
+                ord:true,
             });
+        }
+    },
+
+}
+scripts.push(scr);
+
+
+var scr = {
+    id: "grid9_opposites",
+    name: "grilla 9 cruces",
+
+    init: function() {
+        let rot = PI*0.0;//random(PI*2);
+        let locs = locs_grid({n:9, cs:3, rs:3})
+        let scale = chroma.scale(front);
+
+        for(let lc of locs){
+            let fs = [
+                // {type:'wind', f:0.1, a:lerp(-PI*1.2, PI*0.2, lc.n/locs.length)},
+                {type:'loop', f:1/5},
+                {type:'local', f:2, from:2, reach:2},
+                // {type:'push', f:{src:'nrm', cv:'sin', pw:2, cy:3,  mn:-0.3, mx:0.6}, name:"centroid"}
+                {type:'spring', f:0.005, len:{src:'nrm', cv:'sin', pw:1.0, cy:3,  mn:120, mx:500}, name:"opposite"}
+            ]
+
+            let gb = new GrowBlob({
+                cx:lc.x,
+                cy:lc.y,
+                rot:rot,
+                // rot: random(-PI, PI),
+                forces:fs,
+                num:120,
+                every:5,
+                damp:0.85,
+                //col:front[lc.n % front.length],
+                col: scale(lc.n / locs.length).rgb(),
+                ord:true,
+            });
+
+            gb.findOpposites();
         }
     },
 
