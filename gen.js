@@ -135,7 +135,7 @@ var scr = {
             ]
             let cl = this.col; //front[this.count % front.length]
             let rt = this.rot;
-            new GrowBlob({cx:cx, cy:cy, rot:rt, forces:fs, num:60, every:5, damp:0.85, col:cl, alpha:255, weight:3, stroke:back, ord:false});
+            new GrowBlob({cx:cx, cy:cy, rot:rt, forces:fs, num:60, every:3, damp:0.85, col:cl, alpha:255, weight:3, stroke:back, ord:false});
             this.count ++;
         }
     }
@@ -166,7 +166,7 @@ var scr = {
                 rot:rot,
                 forces:fs,
                 num:90,
-                every:5,
+                every:3,
                 damp:0.85,
                 col:front[lc.n % front.length],
             });
@@ -408,7 +408,7 @@ var scr = {
                 rot:rot,
                 forces:fs,
                 num:90,
-                every:5,
+                every:3,
                 damp:0.85,
                 col:front[lc.n % front.length],
             });
@@ -444,7 +444,7 @@ var scr = {
                 rot:rot,
                 forces:fs,
                 num:90,
-                every:5,
+                every:3,
                 damp:0.85,
                 //col:front[lc.n % front.length],
                 col: scale(lc.n / locs.length).rgb(),
@@ -482,7 +482,7 @@ var scr = {
                 // rot: random(-PI, PI),
                 forces:fs,
                 num:120,
-                every:5,
+                every:3,
                 damp:0.85,
                 //col:front[lc.n % front.length],
                 col: scale(lc.n / locs.length).rgb(),
@@ -519,7 +519,7 @@ var scr = {
                 // rot: random(-PI, PI),
                 forces:fs,
                 num:120,
-                every:5,
+                every:3,
                 damp:0.85,
                 //col:front[lc.n % front.length],
                 col: scale(lc.n / locs.length).rgb(),
@@ -557,11 +557,89 @@ var scr = {
                 rot: random(-PI, PI),
                 forces:fs,
                 num:120,
-                every:5,
+                every:3,
                 damp:0.85,
                 //col:front[lc.n % front.length],
                 col: scale(lc.n / locs.length).rgb(),
                 ord:true,
+            });
+
+            gb.findOpposites();
+        }
+    },
+
+}
+scripts.push(scr);
+
+var scr = {
+    id: "grid12_opposites1",
+
+    init: function() {
+        let rot = PI*0.0;//random(PI*2);
+        let locs = locs_grid({n:12, cs:4, rs:3})
+        let scale = chroma.scale(front);
+
+        for(let lc of locs){
+            let fs = [
+                // {type:'wind', f:0.1, a:lerp(-PI*1.2, PI*0.2, lc.n/locs.length)},
+                {type:'loop', f:1/5},
+                {type:'local', f:2, from:2, reach:2},
+                // {type:'push', f:{src:'nrm', cv:'sin', pw:2, cy:3,  mn:-0.3, mx:0.6}, name:"centroid"}
+                {type:'spring', f:0.005, len:{src:'nrm', cv:'sin', pw:1.0, cy:1,  mn:60, mx:120+lc.n*4}, name:"opposite"}
+            ]
+
+            let gb = new GrowBlob({
+                cx:lc.x,
+                cy:lc.y,
+                rot:rot,
+                // rot: random(-PI, PI),
+                forces:fs,
+                num:120,
+                every:3,
+                damp:0.88,
+                //col:front[lc.n % front.length],
+                col: scale(lc.n / locs.length).rgb(),
+                ord:true,
+            });
+
+            gb.findOpposites();
+        }
+    },
+
+}
+scripts.push(scr);
+
+
+var scr = {
+    id: "grid12_opp_push_cy2",
+
+    init: function() {
+        let rot = PI*0.0;//random(PI*2);
+        let locs = locs_grid({n:12, cs:3, rs:4})
+        let scale = chroma.scale(front);
+
+        for(let lc of locs){
+            let fs = [
+                // {type:'wind', f:0.1, a:lerp(-PI*1.2, PI*0.2, lc.n/locs.length)},
+                {type:'loop', f:1/5},
+                {type:'local', f:2, from:2, reach:2},
+                {type:'push', f:{src:'nrm', cv:'sin', pw:3, cy:2,  mn:-0.6, mx:1.2}, name:"opposite"}
+                //{type:'spring', f:0.005, len:{src:'nrm', cv:'sin', pw:1.0, cy:3,  mn:90, mx:300}, name:"opposite"}
+            ]
+
+            let gb = new GrowBlob({
+                cx:lc.x,
+                cy:lc.y,
+                rot:rot,
+                // rot: random(-PI, PI),
+                forces:fs,
+                num:120,
+                every:3,
+                damp:0.85,
+                //col:front[lc.n % front.length],
+                //col: scale(lc.n / locs.length).rgb(),
+                col: scale(random(1)).rgb(),
+                ord:false,
             });
 
             gb.findOpposites();

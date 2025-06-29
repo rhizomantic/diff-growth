@@ -20,13 +20,13 @@ var vid;
 var startVid = true;
 var recording = false;
 var stopVid = false;
-var duration = 1200;
+var duration = 600;
 // var frameEvery = 2;
 
 // var autoZoom = false;
 // var autoZoom = [{start:0, end:1200, from:4, to: 5.5, ease:'IO', pw:2}];
 var autoZoom = [
-    {start:0, end:600, from:1, to: 4.5, ease:'IO', pw:2},
+    {start:0, end:480, from:0.5, to: 5, ease:'simple', pw:0.5},
     // {start:1200, end:1550, from:5.5, to:1, ease:'IO', pw:2}
 ]
 
@@ -845,7 +845,7 @@ class Thing extends Tweenable {
             if(this.bounds[3] < -this.wrapMargin) this.translate(0, skh+this.wrapMargin*2);
         }
 
-        this.mT ++;
+        // this.mT ++; // ya se ocupa Tweenable
     }
 
     insertAfter(dad, cf) {
