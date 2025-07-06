@@ -14,7 +14,7 @@ var grid, cell;
 var sx, script;
 var params;
 var zoom = 1;
-var stepsPerFrame = 4;
+var stepsPerFrame = 5;
 
 var vid;
 var startVid = false;
@@ -26,7 +26,7 @@ var duration = 1200;
 // var autoZoom = false;
 // var autoZoom = [{start:0, end:1200, from:4, to: 5.5, ease:'IO', pw:2}];
 var autoZoom = [
-    {start:0, end:600, from:0.5, to: 5, ease:'simple', pw:0.5},
+    {start:0, end:600, from:2.5, to: 4.5, ease:'simple', pw:0.5},
     // {start:1200, end:1550, from:5.5, to:1, ease:'IO', pw:2}
 ]
 

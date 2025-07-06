@@ -701,11 +701,11 @@ var scr = {
 
         for(let lc of locs){
             let fs = [
-                {type:'wind', f:random(-0.2, 0.2), a:rot}, //a:lerp(-PI*1.2, PI*0.2, lc.n/locs.length)},
+                {type:'wind', f:random(0, 0.3), a:rot}, //a:lerp(-PI*1.2, PI*0.2, lc.n/locs.length)},
                 {type:'loop', f:1/5},
                 //{type:'local', f:2, from:2, reach:2},
                 //{type:'push', f:{src:'nrm', cv:'sin', pw:3, cy:4,  mn:-0.6, mx:1.2}, name:"opposite"}
-                {type:'spring', f:0.005, len:{src:'nrm', cv:'sin', pw:1.0, cy:2,  mn:90, mx:300}, name:"centroid"}
+                {type:'spring', f:0.005, len:{src:'nrm', cv:'sin', pw:1.0, cy:2,  mn:40, mx:300}, name:"centroid"}
             ]
 
             let gb = new GrowBlob({
@@ -720,7 +720,7 @@ var scr = {
                 //col:front[lc.n % front.length],
                 //col: scale(lc.n / locs.length).rgb(),
                 col: scale(random(1)).rgb(),
-                ord:true,
+                ord: true,
             });
 
             gb.findOpposites();
