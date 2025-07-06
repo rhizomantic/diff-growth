@@ -17,16 +17,16 @@ var zoom = 1;
 var stepsPerFrame = 4;
 
 var vid;
-var startVid = true;
+var startVid = false;
 var recording = false;
 var stopVid = false;
-var duration = 600;
+var duration = 1200;
 // var frameEvery = 2;
 
 // var autoZoom = false;
 // var autoZoom = [{start:0, end:1200, from:4, to: 5.5, ease:'IO', pw:2}];
 var autoZoom = [
-    {start:0, end:480, from:0.5, to: 5, ease:'simple', pw:0.5},
+    {start:0, end:600, from:0.5, to: 5, ease:'simple', pw:0.5},
     // {start:1200, end:1550, from:5.5, to:1, ease:'IO', pw:2}
 ]
 
@@ -1006,6 +1006,8 @@ function keyTyped() {
         console.log("save view");
     }  else if (key === 'v') {
         startVid = true;
+        view = createCanvas(skw, skh);
+        view.parent('container');
         reset();
     }  else if (key === 'z') {
         stopVid = true;
