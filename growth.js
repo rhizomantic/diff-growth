@@ -14,7 +14,7 @@ var grid, cell;
 var sx, script;
 var params;
 var zoom = 1;
-var stepsPerFrame = 5;
+var stepsPerFrame = 6;
 
 var vid;
 var startVid = false;
